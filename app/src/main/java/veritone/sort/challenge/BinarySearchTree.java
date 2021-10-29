@@ -90,9 +90,25 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	 * node's depth
 	 */
 	public Map<T, Integer> getDeepestNodes() {
-		final Map<T, Integer> deepestNodes = new HashMap<>();
+		final Map<T, Integer> leaves = new HashMap<>();
 
-		addDeepestNodesToMap(this, deepestNodes, 0);
+		addLeavesToMap(this, leaves, 0);
+
+		int deepest = 0;
+		for (final T currentLeafNode : leaves.keySet()) {
+			if (leaves.get(currentLeafNode) > deepest) {
+				deepest = leaves.get(currentLeafNode);
+			}
+		}
+
+		// build a new list consisting only of nodes with the depth determined to be the
+		// deepest
+		final Map<T, Integer> deepestNodes = new HashMap<>();
+		for (final T currentLeafNode : leaves.keySet()) {
+			if (leaves.get(currentLeafNode) == deepest) {
+				deepestNodes.put(currentLeafNode, leaves.get(currentLeafNode));
+			}
+		}
 
 		return deepestNodes;
 	}
@@ -105,19 +121,18 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	 * @param leaves the running list of leaf nodes encountered during traversal
 	 * @param currentDepth the current depth of the traversal
 	 */
-	private void addDeepestNodesToMap(final BinarySearchTree<T> tree, final Map<T, Integer> leaves,
-			final int currentDepth) {
+	private void addLeavesToMap(final BinarySearchTree<T> tree, final Map<T, Integer> leaves, final int currentDepth) {
 		if (tree.getLesserChild() == null && tree.getGreaterChild() == null) {
 			leaves.put(tree.getValue(), currentDepth);
 			return;
 		}
 
 		if (tree.getLesserChild() != null) {
-			addDeepestNodesToMap(tree.getLesserChild(), leaves, currentDepth + 1);
+			addLeavesToMap(tree.getLesserChild(), leaves, currentDepth + 1);
 		}
 
 		if (tree.getGreaterChild() != null) {
-			addDeepestNodesToMap(tree.getGreaterChild(), leaves, currentDepth + 1);
+			addLeavesToMap(tree.getGreaterChild(), leaves, currentDepth + 1);
 		}
 	}
 }
