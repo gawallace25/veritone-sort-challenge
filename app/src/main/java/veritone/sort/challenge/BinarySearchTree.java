@@ -11,28 +11,10 @@ import java.util.Map;
  */
 public class BinarySearchTree<T extends Comparable<T>> {
 
-	/**
-	 * node value
-	 */
-	private T value;
+	private BinarySearchTreeNode<T> root = null;
 
-	/**
-	 * Child whose value is less than the current node
-	 */
-	private BinarySearchTree<T> lesserChild = null;
-
-	/**
-	 * Child whose value is greater than the current node
-	 */
-	private BinarySearchTree<T> greaterChild = null;
-
-	/**
-	 * Construct a new instance
-	 * 
-	 * @param value the node's value
-	 */
-	public BinarySearchTree(final T value) {
-		this.value = value;
+	public BinarySearchTreeNode<T> getRoot() {
+		return root;
 	}
 
 	/**
@@ -41,46 +23,31 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	 * @param element the element to add
 	 */
 	public void addElement(final T element) {
-		if (element.compareTo(value) < 0) {
-			if (lesserChild == null) {
-				lesserChild = new BinarySearchTree<>(element);
+		final BinarySearchTreeNode<T> newNode = new BinarySearchTreeNode<>(element);
+		if (root == null) {
+			root = newNode;
+			return;
+		}
+
+		boolean inserted = false;
+		BinarySearchTreeNode<T> current = root;
+		while (!inserted) {
+			if (element.compareTo(current.getValue()) < 0) {
+				if (current.getLesserChild() == null) {
+					current.setLesserChild(newNode);
+					inserted = true;
+				} else {
+					current = current.getLesserChild();
+				}
 			} else {
-				lesserChild.addElement(element);
-			}
-		} else if (element.compareTo(value) > 0) {
-			if (greaterChild == null) {
-				greaterChild = new BinarySearchTree<>(element);
-			} else {
-				greaterChild.addElement(element);
+				if (current.getGreaterChild() == null) {
+					current.setGreaterChild(newNode);
+					inserted = true;
+				} else {
+					current = current.getGreaterChild();
+				}
 			}
 		}
-	}
-
-	/**
-	 * Get the value of the current node
-	 * 
-	 * @return the value
-	 */
-	public T getValue() {
-		return value;
-	}
-
-	/**
-	 * Get the subtree whose root node's value is less than the current node
-	 * 
-	 * @return lesser subtree
-	 */
-	public BinarySearchTree<T> getLesserChild() {
-		return lesserChild;
-	}
-
-	/**
-	 * Get the subtree whose root node's value is greater than the current node
-	 * 
-	 * @return the greater subtree
-	 */
-	public BinarySearchTree<T> getGreaterChild() {
-		return greaterChild;
 	}
 
 	/**
@@ -89,19 +56,20 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	 * @return a set of key-value pairs, the key is the node, the value is the
 	 * node's depth
 	 */
+
 	public Map<T, Integer> getDeepestNodes() {
 		final Map<T, Integer> leaves = new HashMap<>();
 
-		addLeavesToMap(this, leaves, 0);
-
 		int deepest = 0;
+		addLeavesToMap(root, leaves, 0, deepest);
+
 		for (final T currentLeafNode : leaves.keySet()) {
 			if (leaves.get(currentLeafNode) > deepest) {
 				deepest = leaves.get(currentLeafNode);
 			}
 		}
 
-		// build a new list consisting only of nodes with the depth determined to be the
+		// build a new list consisting only of nodes with the depth determined to be
 		// deepest
 		final Map<T, Integer> deepestNodes = new HashMap<>();
 		for (final T currentLeafNode : leaves.keySet()) {
@@ -121,18 +89,25 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	 * @param leaves the running list of leaf nodes encountered during traversal
 	 * @param currentDepth the current depth of the traversal
 	 */
-	private void addLeavesToMap(final BinarySearchTree<T> tree, final Map<T, Integer> leaves, final int currentDepth) {
+
+	private void addLeavesToMap(final BinarySearchTreeNode<T> tree, final Map<T, Integer> leaves,
+			final int currentDepth, Integer deepest) {
 		if (tree.getLesserChild() == null && tree.getGreaterChild() == null) {
 			leaves.put(tree.getValue(), currentDepth);
+
+			if (currentDepth > deepest) {
+				deepest = currentDepth;
+			}
 			return;
 		}
 
 		if (tree.getLesserChild() != null) {
-			addLeavesToMap(tree.getLesserChild(), leaves, currentDepth + 1);
+			addLeavesToMap(tree.getLesserChild(), leaves, currentDepth + 1, deepest);
 		}
 
 		if (tree.getGreaterChild() != null) {
-			addLeavesToMap(tree.getGreaterChild(), leaves, currentDepth + 1);
+			addLeavesToMap(tree.getGreaterChild(), leaves, currentDepth + 1, deepest);
 		}
 	}
+
 }

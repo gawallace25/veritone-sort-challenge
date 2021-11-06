@@ -24,7 +24,7 @@ public class BinarySearchTreeBuilder {
 
 			// we're initializing the root node here
 			if (tree == null) {
-				tree = new BinarySearchTree<>(currentValue);
+				tree = new BinarySearchTree<>();
 			} else {
 				tree.addElement(currentValue);
 			}

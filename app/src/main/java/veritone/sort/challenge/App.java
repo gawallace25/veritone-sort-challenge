@@ -45,6 +45,7 @@ public class App {
 			System.out.println(
 					String.format("Node: %s, Depth: %s", currentNodeToPrint, deepestNodes.get(currentNodeToPrint)));
 		}
+
 	}
 
 	/**
@@ -78,21 +79,21 @@ public class App {
 	 * @param tree the tree to print
 	 */
 	private static void printFullTree(final BinarySearchTree<Integer> tree) {
-		final Function<BinarySearchTree<Integer>, String> getLabel = (treeToPrint) -> {
-			return treeToPrint.getValue().toString();
+		final Function<BinarySearchTreeNode<Integer>, String> getLabel = (nodeToPrint) -> {
+			return nodeToPrint.getValue().toString();
 		};
 
-		final Function<BinarySearchTree<Integer>, BinarySearchTree<Integer>> getLeft = (treeToPrint) -> {
-			return treeToPrint.getLesserChild();
+		final Function<BinarySearchTreeNode<Integer>, BinarySearchTreeNode<Integer>> getLeft = (nodeToPrint) -> {
+			return nodeToPrint.getLesserChild();
 		};
 
-		final Function<BinarySearchTree<Integer>, BinarySearchTree<Integer>> getRight = (treeToPrint) -> {
-			return treeToPrint.getGreaterChild();
+		final Function<BinarySearchTreeNode<Integer>, BinarySearchTreeNode<Integer>> getRight = (nodeToPrint) -> {
+			return nodeToPrint.getGreaterChild();
 		};
 
-		final TreePrinter<BinarySearchTree<Integer>> treePrinter = new TreePrinter<BinarySearchTree<Integer>>(getLabel,
-				getLeft, getRight);
+		final TreePrinter<BinarySearchTreeNode<Integer>> treePrinter = new TreePrinter<BinarySearchTreeNode<Integer>>(
+				getLabel, getLeft, getRight);
 
-		treePrinter.printTree(tree);
+		treePrinter.printTree(tree.getRoot());
 	}
 }
